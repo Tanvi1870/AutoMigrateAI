@@ -1,0 +1,13 @@
+{
+  "format": "Representative ICAP Export Format for Prototype",
+  "formatVersion": "1.0",
+  "documentType": "TEST_DATA",
+  "testData": {
+    "BASE_URL": "http://localhost:8001/demo",
+    "USERNAME": "demo_user",
+    "PASSWORD": "demo_password",
+    "COUNTRY": "IN",
+    "ADDRESS": "1 Demo Street"
+  },
+  "sensitiveKeys": []
+}

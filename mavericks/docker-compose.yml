@@ -1,0 +1,46 @@
+# Start everything with: docker compose up --build   (set API_KEY in .env first, see README)
+# Dashboard and API: http://localhost:8080 (the API is at /api behind nginx; the backend port is not published)
+name: automigrate-ai
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    image: automigrate-ai-backend
+    # Not published on the host: only nginx (frontend service) reaches it on the compose network.
+    expose:
+      - "8001"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      ENVIRONMENT: demo
+      API_KEY: ${API_KEY:?Set API_KEY (at least 16 characters) in .env before starting}
+      # Generated tests call the demo app on localhost:8001 inside this container.
+      HEADLESS: "true"
+      CORS_ORIGINS: '["http://localhost:8080"]'
+      # Host headers accepted: the dashboard via nginx (localhost) and the container's own health check.
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-["localhost", "127.0.0.1"]}
+    volumes:
+      - generated:/app/generated
+      - data:/app/data
+    # Chromium needs more shared memory than Docker's 64 MB default.
+    shm_size: 1gb
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: automigrate-ai-frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  generated:
+  data:

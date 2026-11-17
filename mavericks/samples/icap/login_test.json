@@ -1,0 +1,37 @@
+{
+  "format": "Representative ICAP Export Format for Prototype",
+  "formatVersion": "1.0",
+  "documentType": "TEST_CASE",
+  "testCaseId": "ICAP-TC-001",
+  "name": "Login Test",
+  "description": "A valid user signs in and sees the welcome message. Self-contained: objects and data are inline.",
+  "applicationType": "WEB",
+  "steps": [
+    { "sequence": 1, "keyword": "web_navigate", "value": "${BASE_URL}/login", "description": "Open the login page" },
+    { "sequence": 2, "blockRef": "BLK-LOGIN", "description": "Sign in with the demo user" },
+    { "sequence": 3, "keyword": "web_assertText", "object": "welcomeMessage", "expected": "Welcome", "description": "Welcome message is shown" }
+  ],
+  "reusableBlocks": [
+    {
+      "blockId": "BLK-LOGIN",
+      "name": "Login",
+      "description": "Enter credentials and submit the login form",
+      "steps": [
+        { "sequence": 1, "keyword": "web_setText", "object": "username", "value": "${USERNAME}" },
+        { "sequence": 2, "keyword": "web_setText", "object": "password", "value": "${PASSWORD}" },
+        { "sequence": 3, "keyword": "web_click", "object": "loginButton" }
+      ]
+    }
+  ],
+  "objectRepository": {
+    "username": { "type": "id", "value": "username" },
+    "password": { "type": "id", "value": "password" },
+    "loginButton": { "type": "id", "value": "loginBtn" },
+    "welcomeMessage": { "type": "id", "value": "welcome" }
+  },
+  "testData": {
+    "BASE_URL": "http://localhost:8001/demo",
+    "USERNAME": "demo_user",
+    "PASSWORD": "demo_password"
+  }
+}

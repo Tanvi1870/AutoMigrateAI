@@ -1,0 +1,4 @@
+# Development and backend test-suite dependencies (not installed in the runtime image).
+-r requirements.txt
+
+httpx2>=2.13,<3.0  # used by starlette.testclient; replaces deprecated httpx

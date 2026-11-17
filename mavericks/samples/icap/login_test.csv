@@ -1,0 +1,6 @@
+testCaseId,testCaseName,sequence,keyword,object,locatorType,locatorValue,value,expected,description
+ICAP-TC-001,Login Test,1,web_navigate,,,,http://localhost:8001/demo/login,,Open the login page
+ICAP-TC-001,Login Test,2,web_setText,username,id,username,demo_user,,Enter the demo username
+ICAP-TC-001,Login Test,3,web_setText,password,id,password,demo_password,,Enter the dummy demo password
+ICAP-TC-001,Login Test,4,web_click,loginButton,id,loginBtn,,,Click the login button
+ICAP-TC-001,Login Test,5,web_assertText,welcomeMessage,id,welcome,,Welcome,Verify the welcome message is shown

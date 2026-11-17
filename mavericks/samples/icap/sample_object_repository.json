@@ -1,0 +1,19 @@
+{
+  "format": "Representative ICAP Export Format for Prototype",
+  "formatVersion": "1.0",
+  "documentType": "OBJECT_REPOSITORY",
+  "objectRepository": {
+    "username": { "type": "id", "value": "username", "description": "Login page: user name field" },
+    "password": { "type": "id", "value": "password", "description": "Login page: password field" },
+    "loginButton": { "type": "id", "value": "loginBtn", "description": "Login page: submit button" },
+    "welcomeMessage": { "type": "id", "value": "welcome", "description": "Home page: greeting banner" },
+    "addToCartButton": { "type": "data-testid", "value": "add-to-cart", "description": "Product page: add to cart" },
+    "cartLink": { "type": "css", "value": "a.cart-link", "description": "Header: cart link" },
+    "checkoutForm": { "type": "id", "value": "checkoutForm", "description": "Cart page: checkout form" },
+    "countrySelect": { "type": "name", "value": "country", "description": "Checkout: country dropdown" },
+    "addressInput": { "type": "id", "value": "address", "description": "Checkout: address field" },
+    "orderTotal": { "type": "css", "value": "#orderTotal", "description": "Checkout: order total" },
+    "placeOrderButton": { "type": "xpath", "value": "//button[@type='submit']", "description": "Checkout: place order" },
+    "confirmationMessage": { "type": "id", "value": "confirmation", "description": "Confirmation page: message" }
+  }
+}

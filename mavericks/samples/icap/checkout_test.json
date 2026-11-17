@@ -1,0 +1,33 @@
+{
+  "format": "Representative ICAP Export Format for Prototype",
+  "formatVersion": "1.0",
+  "documentType": "TEST_CASE",
+  "testCaseId": "ICAP-TC-002",
+  "name": "Checkout Test",
+  "description": "Logged-in user buys an item. Uses the shared sample_object_repository.json and sample_testdata.json.",
+  "applicationType": "WEB",
+  "steps": [
+    { "sequence": 1, "keyword": "web_navigate", "value": "${BASE_URL}/login", "description": "Open the login page" },
+    { "sequence": 2, "blockRef": "BLK-LOGIN", "description": "Sign in with the demo user" },
+    { "sequence": 3, "keyword": "web_click", "object": "addToCartButton", "description": "Add the item to the cart" },
+    { "sequence": 4, "keyword": "web_click", "object": "cartLink", "description": "Open the cart" },
+    { "sequence": 5, "keyword": "web_wait", "object": "checkoutForm", "value": "5000", "description": "Wait up to 5 s for the checkout form" },
+    { "sequence": 6, "keyword": "web_select", "object": "countrySelect", "value": "${COUNTRY}" },
+    { "sequence": 7, "keyword": "web_setText", "object": "addressInput", "value": "${ADDRESS}" },
+    { "sequence": 8, "keyword": "web_getText", "object": "orderTotal", "value": "order_total", "description": "Capture the order total" },
+    { "sequence": 9, "keyword": "web_click", "object": "placeOrderButton" },
+    { "sequence": 10, "keyword": "web_assertText", "object": "confirmationMessage", "expected": "Order placed" }
+  ],
+  "reusableBlocks": [
+    {
+      "blockId": "BLK-LOGIN",
+      "name": "Login",
+      "description": "Enter credentials and submit the login form",
+      "steps": [
+        { "sequence": 1, "keyword": "web_setText", "object": "username", "value": "${USERNAME}" },
+        { "sequence": 2, "keyword": "web_setText", "object": "password", "value": "${PASSWORD}" },
+        { "sequence": 3, "keyword": "web_click", "object": "loginButton" }
+      ]
+    }
+  ]
+}

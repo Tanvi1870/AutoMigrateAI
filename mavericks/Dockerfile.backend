@@ -1,0 +1,39 @@
+# AutoMigrate AI backend: FastAPI + the browsers that generated Playwright and Selenium tests run in.
+FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+
+# Selenium uses Debian's Chromium + matching driver (SE_CHROMEDRIVER), so nothing is downloaded at test time.
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    SE_CHROMEDRIVER=/usr/bin/chromedriver \
+    AM_CHROME_BINARY=/usr/bin/chromium \
+    AM_BROWSER_ARGS="--no-sandbox --disable-dev-shm-usage"
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends chromium chromium-driver fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.lock backend/requirements.lock
+RUN pip install --require-hashes -r backend/requirements.lock \
+    && python -m playwright install --with-deps chromium \
+    && rm -rf /var/lib/apt/lists/*
+
+# Runtime image only: the backend test suite runs from a dev environment (see README).
+COPY backend/app backend/app
+COPY samples samples
+
+RUN useradd --create-home --uid 10001 automigrate \
+    && mkdir -p generated/playwright generated/selenium data \
+    && chown -R automigrate:automigrate /app /ms-playwright
+USER automigrate
+
+EXPOSE 8001
+HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=6 \
+    CMD python -c "import urllib.request,sys; sys.exit(urllib.request.urlopen('http://127.0.0.1:8001/api/health', timeout=4).status != 200)"
+
+# Generated tests call the demo app at localhost:8001 from inside this container.
+CMD ["uvicorn", "app.main:app", "--app-dir", "backend", "--host", "0.0.0.0", "--port", "8001"]
