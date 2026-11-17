@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "allowedImportRoots": {
+    "common": ["json", "pathlib", "re", "time", "pytest", "os", "logging", "collections", "typing", "posixpath", "urllib"],
+    "project": ["config", "pages", "testdata"],
+    "playwright": ["playwright"],
+    "selenium": ["selenium"]
+  },
+  "forbiddenCalls": ["eval", "exec", "compile", "__import__", "os.system", "os.popen", "subprocess"],
+  "requireAssertion": true,
+  "testFunctionPrefix": "test_",
+  "maxLineLength": 120
+}

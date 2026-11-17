@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "note": "'{value}' is the raw object-repository value. Escaping for CSS/XPath is the LocatorResolver's responsibility.",
+  "strategies": {
+    "id": {
+      "playwright": { "selector": "[id=\"{value}\"]" },
+      "selenium": { "by": "ID", "value": "{value}" }
+    },
+    "css": {
+      "playwright": { "selector": "{value}" },
+      "selenium": { "by": "CSS_SELECTOR", "value": "{value}" }
+    },
+    "xpath": {
+      "playwright": { "selector": "xpath={value}" },
+      "selenium": { "by": "XPATH", "value": "{value}" }
+    },
+    "name": {
+      "playwright": { "selector": "[name=\"{value}\"]" },
+      "selenium": { "by": "NAME", "value": "{value}" }
+    },
+    "data-testid": {
+      "playwright": { "selector": "[data-testid=\"{value}\"]" },
+      "selenium": { "by": "CSS_SELECTOR", "value": "[data-testid=\"{value}\"]" }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.venv
+**/.venv-*
+frontend/node_modules
+frontend/dist
+generated/playwright/*
+generated/selenium/*
+data
+.env
+*.pdf
+.vscode
+.idea

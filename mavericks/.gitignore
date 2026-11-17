@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-*/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Environment / secrets
+.env
+
+# Runtime data
+data/
+backend/data/
+
+# Generated automation projects (keep folder placeholders)
+generated/playwright/*
+generated/selenium/*
+!generated/playwright/.gitkeep
+!generated/selenium/.gitkeep
+
+# Test artefacts
+test-results/
+playwright-report/
+screenshots/
+junit*.xml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/

@@ -1,0 +1,170 @@
+{
+  "version": "2.0",
+  "placeholderConvention": "Templates are the ONLY source of framework code; the LLM never writes framework calls. Placeholders: {locator} Playwright selector, {by} Selenium By constant, {locator_value} Selenium locator value, {value}/{expected} step parameters, {variable} runtime variable name, {timeout_ms}/{timeout_s} wait timeout. String values are inserted as Python literals (repr); raw text is never interpolated.",
+  "keywords": {
+    "web_navigate": {
+      "description": "Open a URL in the current browser page.",
+      "applicationType": "WEB",
+      "status": "SUPPORTED",
+      "requiredParameters": [
+        { "name": "value", "description": "Absolute http(s) URL, or a URL that starts with a ${VARIABLE}." }
+      ],
+      "optionalParameters": [],
+      "validationRules": [
+        { "parameter": "value", "rule": "url", "message": "web_navigate needs an absolute http(s) URL or a URL starting with ${VARIABLE}" }
+      ],
+      "targets": {
+        "playwright": { "python": "page.goto({value})", "imports": [] },
+        "selenium": { "python": "driver.get({value})", "imports": [] }
+      }
+    },
+    "web_click": {
+      "description": "Click a web element.",
+      "applicationType": "WEB",
+      "status": "SUPPORTED",
+      "requiredParameters": [
+        { "name": "object", "description": "Object repository name of the element to click." }
+      ],
+      "optionalParameters": [],
+      "validationRules": [],
+      "targets": {
+        "playwright": { "python": "page.locator({locator}).click()", "imports": [] },
+        "selenium": {
+          "python": "driver.find_element(By.{by}, {locator_value}).click()",
+          "imports": ["from selenium.webdriver.common.by import By"]
+        }
+      }
+    },
+    "web_setText": {
+      "description": "Replace the text of an input element.",
+      "applicationType": "WEB",
+      "status": "SUPPORTED",
+      "requiredParameters": [
+        { "name": "object", "description": "Object repository name of the input element." },
+        { "name": "value", "description": "Text to enter; an empty string clears the field." }
+      ],
+      "optionalParameters": [],
+      "validationRules": [],
+      "targets": {
+        "playwright": { "python": "page.locator({locator}).fill({value})", "imports": [] },
+        "selenium": {
+          "python": "driver.find_element(By.{by}, {locator_value}).clear()\ndriver.find_element(By.{by}, {locator_value}).send_keys({value})",
+          "imports": ["from selenium.webdriver.common.by import By"],
+          "note": "clear() first so the result matches Playwright fill(), which replaces existing text."
+        }
+      }
+    },
+    "web_getText": {
+      "description": "Read the visible text of a web element into a runtime variable.",
+      "applicationType": "WEB",
+      "status": "ASSUMED",
+      "assumption": "ICAP semantics unconfirmed: 'value' is treated as the name of the runtime variable that receives the text.",
+      "requiredParameters": [
+        { "name": "object", "description": "Object repository name of the element to read." },
+        { "name": "value", "description": "Runtime variable name that receives the text." }
+      ],
+      "optionalParameters": [],
+      "validationRules": [
+        { "parameter": "value", "rule": "pythonIdentifier", "message": "web_getText needs a valid variable name in 'value'" }
+      ],
+      "targets": {
+        "playwright": {
+          "python": "{variable} = page.locator({locator}).inner_text()",
+          "imports": [],
+          "note": "inner_text() returns rendered text, matching Selenium's WebElement.text."
+        },
+        "selenium": {
+          "python": "{variable} = driver.find_element(By.{by}, {locator_value}).text",
+          "imports": ["from selenium.webdriver.common.by import By"]
+        }
+      }
+    },
+    "web_assertText": {
+      "description": "Assert that a web element's text equals the expected text.",
+      "applicationType": "WEB",
+      "status": "SUPPORTED",
+      "requiredParameters": [
+        { "name": "object", "description": "Object repository name of the element to check." },
+        { "name": "expected", "description": "Expected full text of the element." }
+      ],
+      "optionalParameters": [],
+      "validationRules": [],
+      "targets": {
+        "playwright": {
+          "python": "expect(page.locator({locator})).to_have_text({expected})",
+          "imports": ["from playwright.sync_api import expect"],
+          "note": "Auto-retries until the timeout and normalises whitespace."
+        },
+        "selenium": {
+          "python": "assert driver.find_element(By.{by}, {locator_value}).text == {expected}",
+          "imports": ["from selenium.webdriver.common.by import By"],
+          "note": "Exact comparison, evaluated once."
+        }
+      }
+    },
+    "web_wait": {
+      "description": "Wait until a web element is visible.",
+      "applicationType": "WEB",
+      "status": "ASSUMED",
+      "assumption": "ICAP semantics unconfirmed: treated as 'wait for element visible'; optional 'value' is a timeout in milliseconds.",
+      "requiredParameters": [
+        { "name": "object", "description": "Object repository name of the element to wait for." }
+      ],
+      "optionalParameters": [
+        { "name": "value", "description": "Timeout in milliseconds.", "default": "30000" }
+      ],
+      "validationRules": [
+        { "parameter": "value", "rule": "integerRange", "min": 1, "max": 300000, "message": "web_wait timeout must be a whole number of milliseconds between 1 and 300000" }
+      ],
+      "targets": {
+        "playwright": {
+          "python": "page.locator({locator}).wait_for(state=\"visible\", timeout={timeout_ms})",
+          "imports": []
+        },
+        "selenium": {
+          "python": "WebDriverWait(driver, {timeout_s}).until(EC.visibility_of_element_located((By.{by}, {locator_value})))",
+          "imports": [
+            "from selenium.webdriver.common.by import By",
+            "from selenium.webdriver.support.ui import WebDriverWait",
+            "from selenium.webdriver.support import expected_conditions as EC"
+          ]
+        }
+      }
+    },
+    "web_select": {
+      "description": "Select a dropdown option by its value attribute.",
+      "applicationType": "WEB",
+      "status": "SUPPORTED",
+      "requiredParameters": [
+        { "name": "object", "description": "Object repository name of the <select> element." },
+        { "name": "value", "description": "Value attribute of the option to select." }
+      ],
+      "optionalParameters": [],
+      "validationRules": [
+        { "parameter": "value", "rule": "notEmpty", "message": "web_select needs a non-empty option value" }
+      ],
+      "targets": {
+        "playwright": { "python": "page.locator({locator}).select_option({value})", "imports": [] },
+        "selenium": {
+          "python": "Select(driver.find_element(By.{by}, {locator_value})).select_by_value({value})",
+          "imports": [
+            "from selenium.webdriver.common.by import By",
+            "from selenium.webdriver.support.ui import Select"
+          ]
+        }
+      }
+    }
+  },
+  "futureAdapters": {
+    "win_TE_": {
+      "applicationType": "TERMINAL_EMULATOR",
+      "status": "FUTURE_ADAPTER",
+      "note": "Terminal emulator automation. Detected and reported; not converted. Match this prefix before 'win_'."
+    },
+    "win_": {
+      "applicationType": "WINDOWS",
+      "status": "FUTURE_ADAPTER",
+      "note": "Windows desktop automation. Detected and reported; not converted to Playwright/Selenium."
+    }
+  }
+}
